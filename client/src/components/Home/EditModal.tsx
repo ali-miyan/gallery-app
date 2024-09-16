@@ -102,7 +102,7 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
               <img
                 src={
                   imagePreview === data.url
-                    ? `../../../public/userImages/${imagePreview}`
+                    ? `/userImages/${imagePreview}`
                     : imagePreview
                 }
                 alt="Preview"
