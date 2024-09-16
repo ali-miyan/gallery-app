@@ -52,8 +52,12 @@ export const login = asyncHandler(
           process.env.WEB_TOKEN as string,
           { expiresIn: "1d" }
         );
-        res.cookie("token", token);
-
+        res.cookie("token", token, {
+          httpOnly: true, 
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+        
         res.json({ status: true, message: "Login successful!", token });
       } else {
         res.json({ status: false, message: "Invalid email or password." });
