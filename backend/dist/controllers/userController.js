@@ -50,7 +50,7 @@ exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
         if (check) {
             const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.WEB_TOKEN, { expiresIn: "1d" });
             res.cookie("token", token, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,
                 path: "/",
                 maxAge: 24 * 60 * 60 * 1000,
