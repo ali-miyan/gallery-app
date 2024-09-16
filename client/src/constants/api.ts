@@ -1,1 +1,1 @@
-export const baseUserUrl = "http://localhost:5000/api/user"
+export const baseUserUrl = process.env.URL || "http://localhost:5000/api/user";

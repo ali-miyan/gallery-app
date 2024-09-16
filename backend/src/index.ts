@@ -6,13 +6,14 @@ const app: Express = express();
 import cors from 'cors';
 import cookie from 'cookie-parser';
 connectDB()
-const port = 5000;
+
+const port = process.env.PORT || 5000;
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true
 }));
 app.use(cookie())
