@@ -56,7 +56,6 @@ export const login = asyncHandler(
           httpOnly: true,
           secure: true, 
           sameSite: 'none',
-          domain: '.https://gallery-app-liart.vercel.app',
           path: "/", 
           maxAge: 24 * 60 * 60 * 1000, 
         });
