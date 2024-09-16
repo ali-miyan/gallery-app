@@ -50,8 +50,10 @@ exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
         if (check) {
             const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.WEB_TOKEN, { expiresIn: "1d" });
             res.cookie("token", token, {
-                httpOnly: false,
+                httpOnly: true,
                 secure: true,
+                sameSite: 'none',
+                domain: '.https://gallery-app-liart.vercel.app',
                 path: "/",
                 maxAge: 24 * 60 * 60 * 1000,
             });

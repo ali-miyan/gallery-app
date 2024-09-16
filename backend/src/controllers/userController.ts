@@ -51,12 +51,16 @@ export const login = asyncHandler(
           process.env.WEB_TOKEN as string,
           { expiresIn: "1d" }
         );
-        res.cookie("token", token, {
-          httpOnly: false, 
-          secure: true,
-          path: "/",
-          maxAge: 24 * 60 * 60 * 1000,
+
+        res.cookie("token", token, { 
+          httpOnly: true,
+          secure: true, 
+          sameSite: 'none',
+          domain: '.https://gallery-app-liart.vercel.app',
+          path: "/", 
+          maxAge: 24 * 60 * 60 * 1000, 
         });
+        
         
         res.json({ status: true, message: "Login successful!", token });
       } else {
