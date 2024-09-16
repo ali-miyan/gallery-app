@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FiX, FiSave, FiImage } from "react-icons/fi";
 import { useUpdateImageMutation } from "../../store/reducers/userSlice";
 import { notifySuccess, notifyError } from "../../pages/Toast";

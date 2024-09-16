@@ -3,7 +3,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 
-export const SortableItem = ({ image, index }) => {
+export const SortableItem = ({ image, index }:any) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: image._id });
 
