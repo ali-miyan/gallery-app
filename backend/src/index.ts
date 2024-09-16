@@ -9,6 +9,14 @@
 
     const port = process.env.PORT || 5000;
 
+    app.use((req,res,next) => {
+        const { method, url } = req;
+        console.log(`Received ${method} request to ${url}`);
+        console.log(`Request Headers: ${JSON.stringify(req.headers)}`);
+        next();
+    });
+        
+
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }))
@@ -17,7 +25,7 @@
         credentials: true
     }));
     app.use(cookie())
-    
+
     app.use('/api/user', userRoute)
 
     app.use(pageNotFound)
@@ -26,4 +34,5 @@
 
     app.listen(port, () => {
         return console.log(`Express is listening at http://localhost:${port}`);
+        
     });
