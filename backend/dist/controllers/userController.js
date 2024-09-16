@@ -45,12 +45,15 @@ exports.login = (0, express_async_handler_1.default)((req, res) => __awaiter(voi
     const { email, password } = req.body;
     console.log("login");
     const user = yield userModel_1.default.findOne({ email });
-    console.log(process.env.WEB_TOKEN);
     if (user) {
         const check = yield bcryptjs_1.default.compare(password, user.password);
         if (check) {
             const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.WEB_TOKEN, { expiresIn: "1d" });
-            res.cookie("token", token);
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 24 * 60 * 60 * 1000,
+            });
             res.json({ status: true, message: "Login successful!", token });
         }
         else {
