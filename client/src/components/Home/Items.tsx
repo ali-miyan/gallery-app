@@ -29,7 +29,7 @@ export const SortableItem = ({ image, index }:any) => {
       className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-[#361c3d] animate-fade-in"
     >
       <img
-        src={`../../../public/userImages/${image.url}`}
+        src={`/userImages/${image.url}`}
         alt={`Image ${index + 1}`}
         className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-110"
       />
