@@ -52,7 +52,7 @@ export const login = asyncHandler(
           { expiresIn: "1d" }
         );
         res.cookie("token", token, {
-          httpOnly: true, 
+          httpOnly: false, 
           secure: true,
           path: "/",
           maxAge: 24 * 60 * 60 * 1000,
