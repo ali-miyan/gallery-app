@@ -33,6 +33,7 @@
 
 
     app.listen(port, () => {
+        console.log(process.env.CLIENT_URL);
         return console.log(`Express is listening at http://localhost:${port}`);
         
     });
