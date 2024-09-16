@@ -42,7 +42,6 @@ export const login = asyncHandler(
     console.log("login");
 
     const user = await User.findOne({ email });
-    console.log(process.env.WEB_TOKEN);
 
     if (user) {
       const check = await bcrypt.compare(password, user.password);
@@ -54,7 +53,7 @@ export const login = asyncHandler(
         );
         res.cookie("token", token, {
           httpOnly: true, 
-          secure: process.env.NODE_ENV === "production",
+          secure: true,
           maxAge: 24 * 60 * 60 * 1000,
         });
         
