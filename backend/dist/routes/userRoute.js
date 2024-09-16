@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const userController_1 = require("../controllers/userController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const multerMiddleware_1 = require("../middleware/multerMiddleware");
+const router = express_1.default.Router();
+router.get('/auth', authMiddleware_1.authenticateUser, userController_1.auth);
+router.post('/register', userController_1.signUp);
+router.post('/login', userController_1.login);
+router.post('/upload-images', authMiddleware_1.authenticateUser, multerMiddleware_1.upload, userController_1.uploadImages);
+router.post('/logout', userController_1.logout);
+router.get('/get-images', authMiddleware_1.authenticateUser, userController_1.getUserImages);
+router.delete('/delete-image/:id', authMiddleware_1.authenticateUser, userController_1.deleteImage);
+router.get('/get-user', authMiddleware_1.authenticateUser, userController_1.getUser);
+router.post('/edit-image', multerMiddleware_1.upload, authMiddleware_1.authenticateUser, userController_1.editImage);
+router.put('/update-order', authMiddleware_1.authenticateUser, userController_1.updateOrder);
+exports.default = router;
