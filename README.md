@@ -1,6 +1,4 @@
-# Your Project Name
-
-Brief description of your project.
+# GALLERY APP
 
 ## Table of Contents
 - [Features](#features)
