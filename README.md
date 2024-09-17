@@ -28,7 +28,7 @@ Before you begin, ensure you have the following installed:
 Clone the repository:
 
 ```bash
-git clone 'https://github.com/ali-miyan/gallery-app.git'
+git clone https://github.com/ali-miyan/gallery-app.git
 cd gallery-app
 ```
 
@@ -76,7 +76,7 @@ In the backend directory, you can run:
 ## Deployment
 
 Example:
-The application is deployed at: `https://gallery-app-liart.vercel.app`
+The application is deployed at: (https://gallery-app-liart.vercel.app)
 
 ## Built With
 
