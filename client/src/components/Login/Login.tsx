@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { validateEmail, validatePassword } from "../../pages/validation";
 import { notifyError, notifySuccess } from "../../pages/Toast";
 import { useLoginUserMutation } from "../../store/reducers/userSlice";
-import { FiSave } from "react-icons/fi";
 
 const Login = () => {
   const [userLogin, { isLoading }] = useLoginUserMutation();
