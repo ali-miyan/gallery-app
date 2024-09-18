@@ -58,13 +58,13 @@ const Home = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  const handleDragEnd = async (event:any) => {
+  const handleDragEnd = async (event: any) => {
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
 
-    const oldIndex = images.findIndex((item:any) => item._id === active.id);
-    const newIndex = images.findIndex((item:any) => item._id === over.id);
+    const oldIndex = images.findIndex((item: any) => item._id === active.id);
+    const newIndex = images.findIndex((item: any) => item._id === over.id);
     const reorderedImages = arrayMove(images, oldIndex, newIndex);
     setImages(reorderedImages);
 
@@ -83,7 +83,7 @@ const Home = () => {
     }
   };
 
-  const handleDelete = async (id:string) => {
+  const handleDelete = async (id: string) => {
     try {
       const res = await deleteImage(id).unwrap();
       if (res.status) {
@@ -105,12 +105,12 @@ const Home = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (id:string, title:string, url:string) => {
+  const handleEdit = (id: string, title: string, url: string) => {
     setEditData({ id, title, url });
     setIsEditModalOpen(true);
   };
 
-  const handleView = (url:string) => {
+  const handleView = (url: string) => {
     setImageToView(url);
     setIsImageModalOpen(true);
   };
@@ -158,11 +158,11 @@ const Home = () => {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={images.map((img:any) => img._id)}
+              items={images.map((img: any) => img._id)}
               strategy={rectSortingStrategy}
             >
               <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {images.map((image:any, index:number) => (
+                {images.map((image: any, index: number) => (
                   <div key={image._id} className="  relative group">
                     <SortableItem image={image} index={index} />
 
@@ -237,7 +237,9 @@ const Home = () => {
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div className="relative max-w-4xl max-h-full">
             <img
-              src={`/userImages/${imageToView}`}
+              src={`${
+                import.meta.env.VITE_URL || "http://localhost:5000"
+              }/uploads/${imageToView}`}
               alt="Full screen"
               className="max-w-full max-h-[90vh] object-contain"
             />

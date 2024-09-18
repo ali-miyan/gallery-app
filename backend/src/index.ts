@@ -8,15 +8,8 @@
     connectDB()
 
     const port = process.env.PORT || 5000;
-
-    app.use((req,res,next) => {
-        const { method, url } = req;
-        console.log(`Received ${method} request to ${url}`);
-        console.log(`Request Headers: ${JSON.stringify(req.headers)}`);
-        next();
-    });
         
-
+    app.use("/uploads", express.static("uploads"));
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }))

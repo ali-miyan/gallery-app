@@ -102,7 +102,7 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
               <img
                 src={
                   imagePreview === data.url
-                    ? `/userImages/${imagePreview}`
+                    ? `${import.meta.env.VITE_URL || 'http://localhost:5000'}/uploads/${imagePreview}`
                     : imagePreview
                 }
                 alt="Preview"
