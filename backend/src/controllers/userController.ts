@@ -6,7 +6,15 @@ import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import ImageModel from "../models/imageModel";
 import userModel from "../models/userModel";
+import { v2 as cloudinary } from "cloudinary";
+require("dotenv").config();
 config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const auth = asyncHandler(async (req: Request, res: Response) => {
   res.json({ status: true, message: "welcome to home" });
@@ -52,15 +60,14 @@ export const login = asyncHandler(
           { expiresIn: "1d" }
         );
 
-        res.cookie("token", token, { 
+        res.cookie("token", token, {
           httpOnly: true,
-          secure: true, 
-          sameSite: 'none',
-          path: "/", 
-          maxAge: 24 * 60 * 60 * 1000, 
+          secure: true,
+          sameSite: "none",
+          path: "/",
+          maxAge: 24 * 60 * 60 * 1000,
         });
-        
-        
+
         res.json({ status: true, message: "Login successful!", token });
       } else {
         res.json({ status: false, message: "Invalid email or password." });
@@ -83,35 +90,63 @@ export const editImage = asyncHandler(
     }
 
     try {
-      let imageUrl = null;
+      const existingImage = await ImageModel.findById(id);
+
+      if (!existingImage) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+
+      let updateData: any = { title };
 
       if (files && files.length > 0) {
         const file = files[0];
 
-        imageUrl = `${file.filename}`;
+        const uploadResult = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "user_uploads" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+
+          uploadStream.end(file.buffer);
+        });
+
+        if (typeof uploadResult === "object" && uploadResult !== null) {
+          updateData.url = (uploadResult as any).secure_url;
+          const parts = existingImage.url.split("/");
+          const publicId = parts[parts.length - 1].split(".")[0];
+          console.log(publicId, "publicccc");
+
+          try {
+            const deletionResult = await cloudinary.uploader.destroy(
+              `user_uploads/${publicId}`
+            );
+            console.log(deletionResult);
+          } catch (error) {
+            console.error("Error deleting image from Cloudinary:", error);
+          }
+        }
       }
 
-      const updatedImage = await ImageModel.findByIdAndUpdate(
-        id,
-        {
-          title,
-          ...(imageUrl && { url: imageUrl }),
-        },
-        { new: true }
-      );
+      const updatedImage = await ImageModel.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
 
       if (!updatedImage) {
-        return res.status(404).json({ message: "Image not found" });
+        return res.status(404).json({ message: "Failed to update image" });
       }
 
-      res.status(200).json({ message: "Image updated successfully" });
+      res
+        .status(200)
+        .json({ message: "Image updated successfully", image: updatedImage });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Failed to update image" });
     }
   }
 );
-
 export const getUserImages = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const userId = (req as any).user.id;
@@ -131,11 +166,14 @@ export const getUser = asyncHandler(
     return res.json(user);
   }
 );
+
 export const uploadImages = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const titles = JSON.parse(req.body.titles);
     const files = req.files as Express.Multer.File[];
     const userId = (req as any).user.id;
+
+    console.log(files, userId, titles);
 
     const maxOrderImage = await ImageModel.find().sort({ order: -1 }).limit(1);
     const nextOrder = maxOrderImage.length ? maxOrderImage[0].order + 1 : 1;
@@ -153,17 +191,41 @@ export const uploadImages = asyncHandler(
       });
     }
 
-    const imagePromises = files.map((file, index) => {
-      return ImageModel.create({
-        userId: userId,
-        order: nextOrder + index,
-        title: titles[index],
-        url: `${file.filename}`,
+    const uploadPromises = files.map((file, index) => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "user_uploads" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve({ result, index });
+          }
+        );
+
+        uploadStream.end(file.buffer);
       });
     });
 
-    await Promise.all(imagePromises);
-    res.json({ status: true, message: "Uploaded and saved successfully" });
+    try {
+      const uploadResults = await Promise.all(uploadPromises);
+
+      const imagePromises = uploadResults.map((uploadResult: any) => {
+        const { result, index } = uploadResult;
+        return ImageModel.create({
+          userId: userId,
+          order: nextOrder + index,
+          title: titles[index],
+          url: result.secure_url,
+        });
+      });
+
+      await Promise.all(imagePromises);
+      res.json({ status: true, message: "Uploaded and saved successfully" });
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      res
+        .status(500)
+        .json({ status: false, message: "Error uploading images" });
+    }
   }
 );
 
@@ -171,11 +233,23 @@ export const deleteImage = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const imageToDelete = await ImageModel.findById(req.params.id);
 
-    await ImageModel.findByIdAndDelete(req.params.id);
-
     if (!imageToDelete) {
       return res.status(404).json({ message: "Image not found" });
     }
+
+    const parts = imageToDelete.url.split("/");
+    const publicId = parts[parts.length - 1].split(".")[0];
+    console.log(publicId, "publicccc");
+
+    try {
+      const deletionResult = await cloudinary.uploader.destroy(
+        `user_uploads/${publicId}`
+      );
+      console.log(deletionResult);
+    } catch (error) {
+      console.error("Error deleting image from Cloudinary:", error);
+    }
+    await ImageModel.findByIdAndDelete(req.params.id);
 
     await ImageModel.updateMany(
       { order: { $gt: imageToDelete.order } },

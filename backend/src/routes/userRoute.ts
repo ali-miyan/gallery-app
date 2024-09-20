@@ -8,12 +8,12 @@ const router = express.Router();
 router.get('/auth',authenticateUser, auth);
 router.post('/register', signUp);
 router.post('/login', login);
-router.post('/upload-images',authenticateUser,upload, uploadImages);
+router.post('/upload-images',authenticateUser,upload.array('images'), uploadImages);
 router.post('/logout', logout);
 router.get('/get-images',authenticateUser, getUserImages);
 router.delete('/delete-image/:id',authenticateUser, deleteImage);
 router.get('/get-user',authenticateUser, getUser);
-router.post('/edit-image',upload,authenticateUser, editImage);
+router.post('/edit-image',upload.array('images'),authenticateUser, editImage);
 router.put('/update-order',authenticateUser, updateOrder);
 
 

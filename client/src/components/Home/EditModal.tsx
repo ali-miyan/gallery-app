@@ -17,7 +17,6 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-
   const [updateImage, { isLoading }] = useUpdateImageMutation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,9 +33,9 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(title.trim() === ""){
-      setError("please add a title")
-      return
+    if (title.trim() === "") {
+      setError("please add a title");
+      return;
     }
     try {
       const formData = new FormData();
@@ -70,7 +69,7 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
           Edit Image
         </h2>
         {error && (
-          <p className="text-center text-[#e63232] bg-[#ffcbcb] p-3 my-2     rounded-md">
+          <p className="text-center text-[#e63232] bg-[#ffcbcb] p-3 my-2  rounded-md">
             {error}
           </p>
         )}
@@ -102,7 +101,7 @@ const EditModal: React.FC<EditModalProps> = ({ onClose, refetch, data }) => {
               <img
                 src={
                   imagePreview === data.url
-                    ? `${import.meta.env.VITE_URL || 'http://localhost:5000'}/uploads/${imagePreview}`
+                    ? `${imagePreview}`
                     : imagePreview
                 }
                 alt="Preview"
